@@ -8,6 +8,7 @@ using BlogSite.Service.Profiles.CategoriesMappingProfile;
 using BlogSite.Service.Profiles.CommentsMappingProfile;
 using BlogSite.Service.Profiles.PostsMappingProfile;
 using BlogSite.Service.Profiles.UsersMappingProfile;
+using Core.Tokens.Config;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -25,6 +26,11 @@ builder.Services.AddAutoMapper(typeof(PostMappingProfile));
 builder.Services.AddAutoMapper(typeof(CategoryMappingProfile));
 //builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddAutoMapper(typeof(CommentMappingProfile));
+
+builder.Services.Configure<TokenOption>(builder.Configuration.GetSection("TokenOption"));
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddScoped<IPostRepository, EfPostRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
