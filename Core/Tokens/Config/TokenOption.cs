@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+namespace Core.Tokens.Config;
 
-namespace Core.Tokens.Config
+public class TokenOption
 {
-    internal class TokenOption
-    {
-    }
+    public string Issuer { get; set; }
+    public List<string> Audience { get; set; }
+    public int AccesTokenExpiration { get; set; }
+    public string SecurityKey { get; set; }
 }
