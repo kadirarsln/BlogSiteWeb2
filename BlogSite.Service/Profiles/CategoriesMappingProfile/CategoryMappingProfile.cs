@@ -12,6 +12,6 @@ public class CategoryMappingProfile : Profile
         CreateMap<CreateCategoryRequest, Category>();
         CreateMap<UpdateCategoryRequest, Category>();
         CreateMap<Category, CategoryResponseDto>();
-        CreateMap<Category, CategoryWithPostsResponseDto>();
+        //CreateMap<Category, CategoryWithPostsResponseDto>();
     }
 }

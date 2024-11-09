@@ -12,13 +12,13 @@ public class EfCategoryRepository : EfRepositoryBase<BaseDbContext, Category, in
     {
     }
 
-    public IQueryable<Category> GetCategoryWithPosts()
-    {
-        return Context.Categories.Include(d => d.Posts).AsQueryable();
-    }
+    //public IQueryable<Category> GetCategoryWithPosts()
+    //{
+    //    return Context.Categories.Include(d => d.Posts).AsQueryable();
+    //}
 
-    public Category? GetCategoryWithPostsById(int id)
-    {
-        return Context.Categories.Include(d => d.Posts).FirstOrDefault(d => d.Id == id);
-    }
+    //public Category? GetCategoryWithPostsById(int id)
+    //{
+    //    return Context.Categories.Include(d => d.Posts).FirstOrDefault(d => d.Id == id);
+    //}
 }

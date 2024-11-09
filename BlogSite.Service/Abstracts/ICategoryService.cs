@@ -9,9 +9,9 @@ public interface ICategoryService
     ReturnModel<List<CategoryResponseDto>> GetAll();
     ReturnModel<CategoryResponseDto> GetById(int id);
 
-    ReturnModel<CategoryResponseDto> Add(CreateCategoryRequest createdCategory);
-    ReturnModel<CategoryResponseDto> Update(UpdateCategoryRequest updatedCategory);
-    ReturnModel<CategoryResponseDto> Remove(int id);
-    ReturnModel<List<CategoryWithPostsResponseDto>> GetCategoryWithPosts();
-    CategoryWithPostsResponseDto GetCategoryWithPostsById(int categoryId);
+    ReturnModel<NoData> Add(CreateCategoryRequest createdCategory);
+    ReturnModel<NoData> Update(UpdateCategoryRequest updatedCategory);
+    ReturnModel<NoData> Remove(int id);
+    //ReturnModel<List<CategoryWithPostsResponseDto>> GetCategoryWithPosts();
+    //CategoryWithPostsResponseDto GetCategoryWithPostsById(int categoryId);
 }

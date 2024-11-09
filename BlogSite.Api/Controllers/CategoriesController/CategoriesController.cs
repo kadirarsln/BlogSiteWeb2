@@ -79,26 +79,26 @@ namespace BlogSite.Api.Controllers.CategoriesController
             }
         }
 
-        [HttpGet("getcategorywithposts")]
-        public ActionResult<ReturnModel<List<CategoryWithPostsResponseDto>>> GetCategoryWithPosts()
-        {
-            var result = _categoryService.GetCategoryWithPosts();
-            return Ok(result);
-        }
+        //[HttpGet("getcategorywithposts")]
+        //public ActionResult<ReturnModel<List<CategoryWithPostsResponseDto>>> GetCategoryWithPosts()
+        //{
+        //    var result = _categoryService.GetCategoryWithPosts();
+        //    return Ok(result);
+        //}
 
 
-        [HttpGet("{categoryId}/posts")]
-        public async Task<IActionResult> GetDoctorWithAppointmentsById(int categoryId)
-        {
-            try
-            {
-                var result = _categoryService.GetCategoryWithPostsById(categoryId);
-                return Ok(result);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = "Category not Found" });
-            }
-        }
+        //[HttpGet("{categoryId}/posts")]
+        //public async Task<IActionResult> GetDoctorWithAppointmentsById(int categoryId)
+        //{
+        //    try
+        //    {
+        //        var result = _categoryService.GetCategoryWithPostsById(categoryId);
+        //        return Ok(result);
+        //    }
+        //    catch (NotFoundException ex)
+        //    {
+        //        return NotFound(new { message = "Category not Found" });
+        //    }
+        //}
     }
 }

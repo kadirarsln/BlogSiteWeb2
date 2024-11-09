@@ -52,34 +52,34 @@ public class CategoryService : ICategoryService
         };
     }
 
-    public ReturnModel<List<CategoryWithPostsResponseDto>> GetCategoryWithPosts()
-    {
-        var categories = _categoryRepository.GetCategoryWithPosts().ToList();
-        var categoryDto = _mapper.Map<List<CategoryWithPostsResponseDto>>(categories);
+    //public ReturnModel<List<CategoryWithPostsResponseDto>> GetCategoryWithPosts()
+    //{
+    //    var categories = _categoryRepository.GetCategoryWithPosts().ToList();
+    //    var categoryDto = _mapper.Map<List<CategoryWithPostsResponseDto>>(categories);
 
-        return new ReturnModel<List<CategoryWithPostsResponseDto>>
-        {
-            Success = true,
-            Data = categoryDto,
-            Message = "Category with posts are listed.",
-            StatusCode = 200
-        };
-    }
+    //    return new ReturnModel<List<CategoryWithPostsResponseDto>>
+    //    {
+    //        Success = true,
+    //        Data = categoryDto,
+    //        Message = "Category with posts are listed.",
+    //        StatusCode = 200
+    //    };
+    //}
 
-    public CategoryWithPostsResponseDto GetCategoryWithPostsById(int categoryId)
-    {
-        var category = _categoryRepository.GetCategoryWithPostsById(categoryId);
+    //public CategoryWithPostsResponseDto GetCategoryWithPostsById(int categoryId)
+    //{
+    //    var category = _categoryRepository.GetCategoryWithPostsById(categoryId);
 
-        if (category == null)
-        {
-            throw new NotFoundException("Category not found.");
-        }
+    //    if (category == null)
+    //    {
+    //        throw new NotFoundException("Category not found.");
+    //    }
 
-        var categoryDto = _mapper.Map<CategoryWithPostsResponseDto>(category);
-        return categoryDto;
-    }
+    //    var categoryDto = _mapper.Map<CategoryWithPostsResponseDto>(category);
+    //    return categoryDto;
+    //}
 
-    public ReturnModel<CategoryResponseDto> Add(CreateCategoryRequest createdCategory)
+    public ReturnModel<NoData> Add(CreateCategoryRequest createdCategory)
     {
         if (string.IsNullOrEmpty(createdCategory.Name))
         {
@@ -90,9 +90,9 @@ public class CategoryService : ICategoryService
         _categoryRepository.Add(category);
 
         CategoryResponseDto response = _mapper.Map<CategoryResponseDto>(category);
-        return new ReturnModel<CategoryResponseDto>
+        return new ReturnModel<NoData>
         {
-            Data = response,
+            
             Message = "Category Added",
             StatusCode = 201,
             Success = true,
@@ -100,7 +100,7 @@ public class CategoryService : ICategoryService
     }
 
 
-    public ReturnModel<CategoryResponseDto> Remove(int id)
+    public ReturnModel<NoData> Remove(int id)
     {
         Category category = _categoryRepository.GetById(id);
         if (category == null)
@@ -110,16 +110,16 @@ public class CategoryService : ICategoryService
         Category deletedCategory = _categoryRepository.Remove(category);
 
         CategoryResponseDto response = _mapper.Map<CategoryResponseDto>(deletedCategory);
-        return new ReturnModel<CategoryResponseDto>
+        return new ReturnModel<NoData>
         {
-            Data = response,
+          
             Message = "Category Deleted",
             StatusCode = 200,
             Success = true,
         };
     }
 
-    public ReturnModel<CategoryResponseDto> Update(UpdateCategoryRequest updateCategory)
+    public ReturnModel<NoData> Update(UpdateCategoryRequest updatedCategory)
     {
         throw new NotImplementedException();
     }
