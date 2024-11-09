@@ -4,9 +4,8 @@ using BlogSite.Models.Dtos.Posts.Requests;
 using BlogSite.Models.Dtos.Posts.Responses;
 using BlogSite.Models.Entities;
 using BlogSite.Service.Abstracts;
-using Core.Exceptions;
+using BlogSite.Service.Rules;
 using Core.Responses;
-using System.Net;
 
 namespace BlogSite.Service.Concretes;
 
@@ -14,10 +13,12 @@ public class PostService : IPostService
 {
     private readonly IPostRepository _postRepository;
     private readonly IMapper _mapper;
-    public PostService(IPostRepository postRepository, IMapper mapper)
+    private readonly PostBusinessRules _businessRules;
+    public PostService(IPostRepository postRepository, IMapper mapper, PostBusinessRules businessRules)
     {
         _postRepository = postRepository;
         _mapper = mapper;
+        _businessRules = businessRules;
     }
     public ReturnModel<List<PostResponseDto>> GetAll()
     {
@@ -37,6 +38,8 @@ public class PostService : IPostService
     public ReturnModel<PostResponseDto> GetById(Guid id)
     {
         var post = _postRepository.GetById(id);
+        _businessRules.PostIsNullCheck(post);
+
         var response = _mapper.Map<PostResponseDto>(post);
 
         return new ReturnModel<PostResponseDto>
@@ -48,12 +51,11 @@ public class PostService : IPostService
         };
     }
 
-
-
-    public ReturnModel<PostResponseDto> Add(CreatePostRequest create)
+    public ReturnModel<PostResponseDto> Add(CreatePostRequest create, string userId)
     {
         Post createdPost = _mapper.Map<Post>(create);
         createdPost.Id = Guid.NewGuid();
+        createdPost.AuthorId = userId;
 
         _postRepository.Add(createdPost);
 
@@ -108,12 +110,12 @@ public class PostService : IPostService
 
     }
 
-    
+
 
     public ReturnModel<List<PostResponseDto>> GetAllByAuthorId(string id)
     {
         var posts = _postRepository.GetAll(x => x.AuthorId == id);
-        var response =  _mapper.Map<List<PostResponseDto>>(posts);
+        var response = _mapper.Map<List<PostResponseDto>>(posts);
 
         return new ReturnModel<List<PostResponseDto>>
         {
@@ -128,7 +130,7 @@ public class PostService : IPostService
         throw new NotImplementedException();
     }
 
-  
+
 
     //public Post Add(CreatePostRequest create)
     //{
