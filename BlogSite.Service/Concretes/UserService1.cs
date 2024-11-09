@@ -21,10 +21,7 @@ namespace BlogSite.Service.Concretes
                 throw new ValidationException("Parolanız Uyuşmuyor");
             }
             var result = await _userManager.ChangePasswordAsync(user, requestDto.CurrentPassword, requestDto.NewPassword);
-            if (result.Succeeded is false)
-            {
-                throw new ValidationException(result.Errors.ToList().First().Description);
-            }
+            CheckForIdentityResult(result);
             return user;
 
         }
@@ -38,10 +35,7 @@ namespace BlogSite.Service.Concretes
             }
 
             var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new ValidationException(result.Errors.First().Description);
-            }
+            CheckForIdentityResult(result);
             return "Kullanıcı Silindi";
         }
 
@@ -81,10 +75,11 @@ namespace BlogSite.Service.Concretes
                 UserName = dto.Username,
             };
             var result = await _userManager.CreateAsync(user, dto.Password);  //await bunun bitmesini bekle ve daha sonra işlemleri yap async
-            if (!result.Succeeded)
-            {
-                throw new ValidationException(result.Errors.ToList().First().Description);
-            };
+            CheckForIdentityResult(result);
+
+            var addRole = await _userManager.AddToRoleAsync(user,"User");
+            CheckForIdentityResult(addRole);
+
             return user;
         }
 
@@ -102,13 +97,18 @@ namespace BlogSite.Service.Concretes
             user.UserName = dto.Username;
 
             var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new ValidationException("Kullanıcı Güncellendi");
-            }
+            CheckForIdentityResult(result);
+
             return user;
         }
 
+        private void CheckForIdentityResult(IdentityResult result)
+        {
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.Errors.ToList().First().Description);
+            }
+        }
 
     }
 }
