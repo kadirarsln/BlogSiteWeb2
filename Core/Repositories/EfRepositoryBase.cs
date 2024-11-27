@@ -14,15 +14,15 @@ public class EfRepositoryBase<TContext, TEntity, TId> : IRepository<TEntity, TId
     {
         Context = context;
     }
-    public TEntity? Add(TEntity entity)
+    public async Task<TEntity?> AddAsync(TEntity entity)
     {
         entity.CreatedDate = DateTime.Now;
-        Context.Set<TEntity>().Add(entity);         //İlgili tabloyu bulmakta set
-        Context.SaveChanges();
+        await Context.Set<TEntity>().AddAsync(entity);         //İlgili tabloyu bulmakta set
+        await Context.SaveChangesAsync();
 
         return entity;
     }
-    public List<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null, bool enableAutoInclude = true)  //.net 8 
+    public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null, bool enableAutoInclude = true)  //.net 8 
     {
         IQueryable<TEntity> query = Context.Set<TEntity>();
 
@@ -37,21 +37,21 @@ public class EfRepositoryBase<TContext, TEntity, TId> : IRepository<TEntity, TId
 
         return query.ToList();
     }
-    public TEntity? GetById(TId id)
+    public async Task<TEntity?> GetByIdAsync(TId id)
     {
         return Context.Set<TEntity>().Find(id);
     }
-    public TEntity? Remove(TEntity entity)
+    public async Task<TEntity?> RemoveAsync(TEntity entity)
     {
         Context.Set<TEntity>().Remove(entity);
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
         return entity;
     }
-    public TEntity? Update(TEntity entity)
+    public async Task<TEntity?> UpdateAsync(TEntity entity)
     {
         entity.UpdatedDate = DateTime.Now;
         Context.Set<TEntity>().Update(entity);
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
         return entity;
     }
 }
