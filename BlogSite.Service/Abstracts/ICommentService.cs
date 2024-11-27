@@ -6,10 +6,12 @@ namespace BlogSite.Service.Abstracts;
 
 public interface ICommentService
 {
-    ReturnModel<List<CommentResponseDto>> GetAll();
-    ReturnModel<CommentResponseDto> GetById(Guid id);
+    Task<ReturnModel<List<CommentResponseDto>>> GetAllAsync();
+    Task<ReturnModel<CommentResponseDto>> GetByIdAsync(Guid id);
+    Task<ReturnModel<NoData>> AddAsync(CreateCommentRequestDto createdComment, string userId);
+    Task<ReturnModel<NoData>> UpdateAsync(UpdateCommentRequestDto updatedComment);
+    Task<ReturnModel<NoData>> RemoveAsync(Guid id, string userId);
 
-    ReturnModel<CommentResponseDto> Add(CreateCommentRequest createdComment);
-    ReturnModel<CommentResponseDto> Update(UpdateCommentRequest updatedComment);
-    ReturnModel<CommentResponseDto> Remove(Guid id);
+    Task<ReturnModel<List<CommentResponseDto>>> GetAllByUserIdAsync(string userId);
+    Task<ReturnModel<List<CommentResponseDto>>> GetAllByPostIdAsync(Guid postId);
 }

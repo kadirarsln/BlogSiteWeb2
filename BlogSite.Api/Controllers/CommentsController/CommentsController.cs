@@ -1,82 +1,80 @@
-﻿using BlogSite.Models.Dtos.Comments.Requests;
-using BlogSite.Models.Dtos.Comments.Responses;
+﻿using BlogSite.Models.Dtos.Categories.Requests;
+using BlogSite.Models.Dtos.Comments.Requests;
+using BlogSite.Models.Entities;
 using BlogSite.Service.Abstracts;
-using Core.Exceptions;
-using Core.Responses;
+using Core.Tokens.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace BlogSite.Api.Controllers.CommentsController;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CommentsController(ICommentService _commentService) : ControllerBase
+public class CommentsController(ICommentService _commentService, DecoderService decoderService) : ControllerBase
 {
 
     [HttpGet("getall")]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var result = _commentService.GetAll();
+        var result = await _commentService.GetAllAsync();
         return Ok(result);
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<ReturnModel<CommentResponseDto?>> GetById([FromRoute] Guid id)
+    [HttpGet("getbyid")]
+    public async Task<IActionResult> GetByIdAsync([FromQuery] Guid id)
     {
-        try
-        {
-            var result = _commentService.GetById(id);
-            return Ok(result);
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(new ReturnModel<CommentResponseDto?>
-            {
-                Success = false,
-                Message = ex.Message,
-                Data = null,
-                StatusCode = 404
-            });
-        }
+        var result = await _commentService.GetByIdAsync(id);
+        return Ok(result);
+
+    }
+
+    [HttpGet("getallbyuserid")]
+    public async Task<IActionResult> GetAllByUserIdAsync(string userId)
+    {
+        var result = await _commentService.GetAllByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpGet("owncomment")]
+    public async Task<IActionResult> OwnComments()
+    {
+        var userId = decoderService.GetUserId();
+        var result = await _commentService.GetAllByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpGet("getallbypostid")]
+    public async Task<IActionResult> GetAllByPostIdAsync(Guid postId)
+    {
+        var result = await _commentService.GetAllByPostIdAsync(postId);
+        return Ok(result);
     }
 
     [HttpPost("add")]
-    public ActionResult<ReturnModel<CommentResponseDto?>> Add([FromBody] CreateCommentRequest request)
+    public async Task<IActionResult> AddAsync([FromBody] CreateCommentRequestDto dto)
     {
-        try
-        {
-            var result = _commentService.Add(request);
-            return Ok(result);
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(new ReturnModel<CommentResponseDto?>
-            {
-                Success = false,
-                Message = ex.Message,
-                Data = null,
-                StatusCode = 400
-            });
-        }
+        var userId = decoderService.GetUserId();
+        var result = await _commentService.AddAsync(dto, userId);
+        return Ok(result);
+    }
+
+    [HttpPost("update")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateCommentRequestDto dto)
+    {
+        var result = await _commentService.UpdateAsync(dto);
+        return Ok(result);
     }
 
 
     [HttpDelete("delete")]
-    public ActionResult<ReturnModel<CommentResponseDto>> Delete([FromRoute] Guid id)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteAsync([FromQuery] Guid id)
     {
-        try
-        {
-            var result = _commentService.Remove(id);
-            return Ok(result);
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(new ReturnModel<CommentResponseDto>
-            {
-                Success = false,
-                Message = ex.Message,
-                Data = null,
-                StatusCode = 404
-            });
-        }
+        var userId = decoderService.GetUserId();
+        var result = await _commentService.RemoveAsync(id, userId);
+        return Ok(result);
     }
+
 }
