@@ -20,9 +20,9 @@ public class PostService : IPostService
         _mapper = mapper;
         _businessRules = businessRules;
     }
-    public ReturnModel<List<PostResponseDto>> GetAll()
+    public async Task<ReturnModel<List<PostResponseDto>>> GetAllAsync()
     {
-        List<Post> posts = _postRepository.GetAll();
+        List<Post> posts = await _postRepository.GetAllAsync();
         List<PostResponseDto> responses = _mapper.Map<List<PostResponseDto>>(posts);
 
         return new ReturnModel<List<PostResponseDto>>
@@ -35,9 +35,9 @@ public class PostService : IPostService
 
     }
 
-    public ReturnModel<PostResponseDto> GetById(Guid id)
+    public async Task<ReturnModel<PostResponseDto>> GetByIdAsync(Guid id)
     {
-        var post = _postRepository.GetById(id);
+        var post = await _postRepository.GetByIdAsync(id);
         _businessRules.PostIsNullCheck(post);
 
         var response = _mapper.Map<PostResponseDto>(post);
@@ -51,13 +51,13 @@ public class PostService : IPostService
         };
     }
 
-    public ReturnModel<PostResponseDto> Add(CreatePostRequest create, string userId)
+    public async Task<ReturnModel<PostResponseDto>> AddAsync(CreatePostRequest create, string userId)
     {
         Post createdPost = _mapper.Map<Post>(create);
         createdPost.Id = Guid.NewGuid();
         createdPost.AuthorId = userId;
 
-        _postRepository.Add(createdPost);
+        await _postRepository.AddAsync(createdPost);
 
         PostResponseDto response = _mapper.Map<PostResponseDto>(createdPost);
         return new ReturnModel<PostResponseDto>
@@ -69,10 +69,12 @@ public class PostService : IPostService
         };
     }
 
-    public ReturnModel<PostResponseDto> Remove(Guid id)
+    public async Task<ReturnModel<PostResponseDto>> RemoveAsync(Guid id)
     {
-        Post post = _postRepository.GetById(id);
-        Post deletedPost = _postRepository.Remove(post);
+        Post post = await _postRepository.GetByIdAsync(id);
+        _businessRules.PostIsNullCheck(post);
+
+        Post deletedPost = await _postRepository.RemoveAsync(post);
 
         PostResponseDto response = _mapper.Map<PostResponseDto>(deletedPost);
         return new ReturnModel<PostResponseDto>
@@ -86,9 +88,9 @@ public class PostService : IPostService
 
 
 
-    public ReturnModel<PostResponseDto> Update(UpdatePostRequest updatePost)
+    public async Task<ReturnModel<PostResponseDto>> UpdateAsync(UpdatePostRequest updatePost)
     {
-        Post post = _postRepository.GetById(updatePost.Id);
+        Post post = await _postRepository.GetByIdAsync(updatePost.Id);
         Post update = new Post
         {
             CategoryId = post.CategoryId,
@@ -97,7 +99,7 @@ public class PostService : IPostService
             AuthorId = post.AuthorId,
             CreatedDate = post.CreatedDate,
         };
-        Post updatedPost = _postRepository.Update(update);
+        Post updatedPost = await _postRepository.UpdateAsync(update);
         PostResponseDto dto = _mapper.Map<PostResponseDto>(updatedPost);
         return new ReturnModel<PostResponseDto>
         {
@@ -112,9 +114,9 @@ public class PostService : IPostService
 
 
 
-    public ReturnModel<List<PostResponseDto>> GetAllByAuthorId(string id)
+    public async Task<ReturnModel<List<PostResponseDto>>> GetAllByAuthorIdAsync(string id)
     {
-        var posts = _postRepository.GetAll(x => x.AuthorId == id);
+        var posts = await _postRepository.GetAllAsync(x => x.AuthorId == id);
         var response = _mapper.Map<List<PostResponseDto>>(posts);
 
         return new ReturnModel<List<PostResponseDto>>
@@ -125,7 +127,7 @@ public class PostService : IPostService
         };
     }
 
-    public ReturnModel<List<PostResponseDto>> GetAllByCategoryId(int id)
+    public async Task<ReturnModel<List<PostResponseDto>>> GetAllByCategoryIdAsync(int id)
     {
         throw new NotImplementedException();
     }

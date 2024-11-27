@@ -1,18 +1,17 @@
 ﻿using BlogSite.Models.Dtos.Posts.Requests;
 using BlogSite.Models.Dtos.Posts.Responses;
-using BlogSite.Models.Entities;
 using Core.Responses;
 
 namespace BlogSite.Service.Abstracts;
 
 public interface IPostService
 {
-    ReturnModel<List<PostResponseDto>> GetAll();
-    ReturnModel<PostResponseDto> GetById(Guid id);
+    Task<ReturnModel<List<PostResponseDto>>> GetAllAsync();
+    Task<ReturnModel<PostResponseDto>> GetByIdAsync(Guid id);
 
-    ReturnModel<PostResponseDto> Add(CreatePostRequest create , string userId) ;
-    ReturnModel<PostResponseDto> Update(UpdatePostRequest updatePost);
-    ReturnModel<PostResponseDto> Remove(Guid id);
-    ReturnModel<List<PostResponseDto>> GetAllByCategoryId(int id);
-    ReturnModel<List<PostResponseDto>> GetAllByAuthorId(string id);
+    Task<ReturnModel<PostResponseDto>> AddAsync(CreatePostRequest create, string userId);
+    Task<ReturnModel<PostResponseDto>> UpdateAsync(UpdatePostRequest updatePost);
+    Task<ReturnModel<PostResponseDto>> RemoveAsync(Guid id);
+    Task<ReturnModel<List<PostResponseDto>>> GetAllByCategoryIdAsync(int id);
+    Task<ReturnModel<List<PostResponseDto>>> GetAllByAuthorIdAsync(string id);
 }
