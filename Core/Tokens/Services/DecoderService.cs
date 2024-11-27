@@ -9,4 +9,5 @@ public class DecoderService(IHttpContextAccessor httpContextAccessor)
     {
         return httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
     }
+
 }

@@ -9,12 +9,11 @@ namespace BlogSite.Service.Profiles.CommentsMappingProfile
     {
         public CommentMappingProfile()
         {
-            CreateMap<CreateCommentRequest, Comment>();
-            CreateMap<UpdateCommentRequest, Comment>();
+            CreateMap<CreateCommentRequestDto, Comment>();
+            CreateMap<UpdateCommentRequestDto, Comment>();
             CreateMap<Comment, CommentResponseDto>()
                 .ForMember(dest => dest.PostTitle, opt => opt.MapFrom(x => x.Post.Title))
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(x => x.User.UserName));
-
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(x => x.User.UserName));
         }
     }
 }
