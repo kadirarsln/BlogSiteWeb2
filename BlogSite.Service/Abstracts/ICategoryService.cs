@@ -6,12 +6,11 @@ namespace BlogSite.Service.Abstracts;
 
 public interface ICategoryService
 {
-    ReturnModel<List<CategoryResponseDto>> GetAll();
-    ReturnModel<CategoryResponseDto> GetById(int id);
-
-    ReturnModel<NoData> Add(CreateCategoryRequest createdCategory);
-    ReturnModel<NoData> Update(UpdateCategoryRequest updatedCategory);
-    ReturnModel<NoData> Remove(int id);
+    Task<ReturnModel<List<CategoryResponseDto>>> GetAllAsync();
+    Task<ReturnModel<CategoryResponseDto>> GetByIdAsync(int id);
+    Task<ReturnModel<NoData>> AddAsync(CreateCategoryRequest createdCategory);
+    Task<ReturnModel<NoData>> UpdateAsync(UpdateCategoryRequest updatedCategory);
+    Task<ReturnModel<NoData>> RemoveAsync(int id);
     //ReturnModel<List<CategoryWithPostsResponseDto>> GetCategoryWithPosts();
     //CategoryWithPostsResponseDto GetCategoryWithPostsById(int categoryId);
 }

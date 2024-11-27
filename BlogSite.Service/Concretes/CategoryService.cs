@@ -9,21 +9,11 @@ using Core.Responses;
 
 namespace BlogSite.Service.Concretes;
 
-public class CategoryService : ICategoryService
+public class CategoryService(IMapper _mapper, ICategoryRepository _categoryRepository) : ICategoryService
 {
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IMapper _mapper;
-
-    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+    public async Task<ReturnModel<List<CategoryResponseDto>>> GetAllAsync()
     {
-        _categoryRepository = categoryRepository;
-        _mapper = mapper;
-    }
-
-
-    public ReturnModel<List<CategoryResponseDto>> GetAll()
-    {
-        List<Category> categories = _categoryRepository.GetAll();
+        List<Category> categories = await _categoryRepository.GetAllAsync();
         List<CategoryResponseDto> responses = _mapper.Map<List<CategoryResponseDto>>(categories);
 
         return new ReturnModel<List<CategoryResponseDto>>
@@ -35,14 +25,11 @@ public class CategoryService : ICategoryService
         };
     }
 
-    public ReturnModel<CategoryResponseDto> GetById(int id)
+    public async Task<ReturnModel<CategoryResponseDto>> GetByIdAsync(int id)
     {
-        var category = _categoryRepository.GetById(id);
-        if (category == null)
-        {
-            throw new NotFoundException("Category not found.");
-        }
+        var category = await CheckByIdAsync(id);
         var response = _mapper.Map<CategoryResponseDto>(category);
+
         return new ReturnModel<CategoryResponseDto>
         {
             Data = response,
@@ -79,20 +66,17 @@ public class CategoryService : ICategoryService
     //    return categoryDto;
     //}
 
-    public ReturnModel<NoData> Add(CreateCategoryRequest createdCategory)
+    public async Task<ReturnModel<NoData>> AddAsync(CreateCategoryRequest createdCategory)
     {
         if (string.IsNullOrEmpty(createdCategory.Name))
         {
             throw new ValidationException("Category name cannot be empty.");
         }
-
         Category category = _mapper.Map<Category>(createdCategory);
-        _categoryRepository.Add(category);
+        await _categoryRepository.AddAsync(category);
 
-        CategoryResponseDto response = _mapper.Map<CategoryResponseDto>(category);
         return new ReturnModel<NoData>
         {
-            
             Message = "Category Added",
             StatusCode = 201,
             Success = true,
@@ -100,27 +84,39 @@ public class CategoryService : ICategoryService
     }
 
 
-    public ReturnModel<NoData> Remove(int id)
+    public async Task<ReturnModel<NoData>> RemoveAsync(int id)
     {
-        Category category = _categoryRepository.GetById(id);
-        if (category == null)
-        {
-            throw new NotFoundException("Category not found.");
-        }
-        Category deletedCategory = _categoryRepository.Remove(category);
+        Category category = await CheckByIdAsync(id);
+        await _categoryRepository.RemoveAsync(category);
 
-        CategoryResponseDto response = _mapper.Map<CategoryResponseDto>(deletedCategory);
         return new ReturnModel<NoData>
         {
-          
             Message = "Category Deleted",
             StatusCode = 200,
             Success = true,
         };
     }
 
-    public ReturnModel<NoData> Update(UpdateCategoryRequest updatedCategory)
+    public async Task<ReturnModel<NoData>> UpdateAsync(UpdateCategoryRequest updatedCategory)
     {
-        throw new NotImplementedException();
+        Category category = await CheckByIdAsync(updatedCategory.Id);
+        category.Name=updatedCategory.Name;
+        
+        await _categoryRepository.UpdateAsync(category);
+        return new ReturnModel<NoData>
+        { Message = "Category Updated",
+        StatusCode=201,
+        Success = true,
+        };
+    }
+
+    private async Task<Category> CheckByIdAsync(int id)
+    {
+        var category = await _categoryRepository.GetByIdAsync(id);
+        if (category == null)
+        {
+            throw new NotFoundException("Category not found.");
+        }
+        return category;
     }
 }

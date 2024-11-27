@@ -1,8 +1,6 @@
 ﻿using BlogSite.Models.Dtos.Categories.Requests;
-using BlogSite.Models.Dtos.Categories.Responses;
 using BlogSite.Service.Abstracts;
-using Core.Exceptions;
-using Core.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogSite.Api.Controllers.CategoriesController
@@ -12,71 +10,44 @@ namespace BlogSite.Api.Controllers.CategoriesController
     public class CategoriesController(ICategoryService _categoryService) : ControllerBase
     {
         [HttpGet("getall")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var result = _categoryService.GetAll();
+            var result = await _categoryService.GetAllAsync();
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<ReturnModel<CategoryResponseDto?>> GetById([FromRoute] int id)
+        [HttpGet("getbyid")]
+        public async Task<IActionResult> GetByIdAsync([FromQuery] int id)
         {
-            try
-            {
-                var result = _categoryService.GetById(id);
-                return Ok(result);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ReturnModel<CategoryResponseDto?>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    Data = null,
-                    StatusCode = 404
-                });
-            }
+            var result = await _categoryService.GetByIdAsync(id);
+            return Ok(result);
+
         }
 
         [HttpPost("add")]
-        public ActionResult<ReturnModel<CategoryResponseDto?>> Add([FromBody] CreateCategoryRequest request)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddAsync([FromBody] CreateCategoryRequest dto)
         {
-            try
-            {
-                var result = _categoryService.Add(request);
-                return Ok(result);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new ReturnModel<CategoryResponseDto?>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    Data = null,
-                    StatusCode = 400
-                });
-            }
+            var result = await _categoryService.AddAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("update")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateCategoryRequest dto)
+        {
+            var result = await _categoryService.UpdateAsync(dto);
+            return Ok(result);
         }
 
 
         [HttpDelete("delete")]
-        public ActionResult<ReturnModel<CategoryResponseDto>> Delete([FromRoute] int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteAsync([FromQuery] int id)
         {
-            try
-            {
-                var result = _categoryService.Remove(id);
-                return Ok(result);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ReturnModel<CategoryResponseDto>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    Data = null,
-                    StatusCode = 404
-                });
-            }
+
+            var result = await _categoryService.RemoveAsync(id);
+            return Ok(result);
         }
 
         //[HttpGet("getcategorywithposts")]
